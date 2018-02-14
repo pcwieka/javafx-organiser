@@ -1,0 +1,289 @@
+.grid {
+    -fx-background-color: white;
+    -fx-background-insets: 0.0 5.0 0.0 5.0;
+    -fx-padding: 1;
+    -fx-hgap: 2;
+    -fx-vgap: 2;
+}
+
+
+.borderpane {
+	
+	-fx-background-color: white;
+	
+}
+
+.scroll-pane {
+    -fx-background: white;
+    -fx-border-color: white;
+}
+
+.vbox-daynames, .vbox-weeks {
+    -fx-background-color: #ccccff;
+    -fx-alignment: center;
+    -fx-background-radius: 3.0;
+   
+}
+
+.vbox-daynames-saturday {
+    -fx-background-color: #ccccff;
+    -fx-alignment: center;
+    -fx-background-radius: 3.0;
+
+}
+
+.vbox-daynames-sunday {
+    -fx-background-color: #ccccff;
+    -fx-alignment: center;
+    -fx-background-radius: 3.0;
+
+}
+
+
+
+.vbox-day{
+	
+	-fx-halignment: center;
+	-fx-valignment: top;
+	-fx-spacing: 2.0;
+	-fx-border-width: 2px;
+	-fx-border-color: #000080;
+	-fx-border-radius: 3.0;
+    -fx-padding: 0 1 0 1;
+
+
+	
+	
+	
+}
+
+
+.vbox-day-saturday{
+
+    -fx-halignment: center;
+    -fx-valignment: top;
+    -fx-spacing: 2.0;
+    -fx-border-width: 2px;
+    -fx-border-color: gray;
+    -fx-border-radius: 3.0;
+    -fx-padding: 0 1 0 1;
+
+
+
+
+}
+
+.vbox-day-sunday{
+
+    -fx-halignment: center;
+    -fx-valignment: top;
+    -fx-spacing: 2.0;
+    -fx-border-width: 2px;
+    -fx-border-color: darkred;
+    -fx-border-radius: 3.0;
+    -fx-padding: 0 1 0 1;
+
+}
+
+.vbox-day-today{
+
+    -fx-halignment: center;
+    -fx-valignment: top;
+    -fx-spacing: 2.0;
+    -fx-border-width: 2px;
+    -fx-border-color: darkorange;
+    -fx-border-radius: 3.0;
+    -fx-padding: 0 1 0 1;
+
+}
+
+.vbox-day-outOfMonthDay{
+
+    -fx-halignment: center;
+    -fx-valignment: top;
+    -fx-spacing: 2.0;
+    -fx-border-width: 2px;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 3.0;
+    -fx-padding: 0 1 0 1;
+
+}
+
+
+
+
+
+
+.vbox-events {
+
+	-fx-spacing: 3.0;
+	
+}
+
+.label-daynames, .label-weeks {
+	
+	-fx-font-size: 11pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000080;
+	
+}
+
+.label-day-window {
+
+    -fx-font-size: 15pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000080;
+
+}
+
+.label-dayname-cell {
+	
+	-fx-font-size: 11pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000080;
+    
+	
+}
+
+.label-dayname-cell-saturday {
+
+    -fx-font-size: 11pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: gray;
+
+
+}
+
+.label-dayname-cell-sunday {
+
+    -fx-font-size: 11pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: darkred;
+
+
+}
+
+
+.label-dayname-cell-today {
+
+    -fx-font-size: 11pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: darkorange;
+
+
+}
+
+
+.label-dayname-cell-outOfMonthDay{
+
+    -fx-font-size: 11pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: lightgray;
+
+}
+
+.label-weather-place {
+
+    -fx-font-size: 13pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000080;
+
+}
+
+.label-weather-summary {
+
+    -fx-font-size: 12pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000080;
+
+}
+
+.label-weather {
+
+    -fx-font-size: 10pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000080;
+
+}
+
+.hbox-dayname-cell {
+	
+	-fx-border-width: 0px 0px 2px 0px;
+	-fx-border-color: #000080;
+	
+}
+
+.hbox-dayname-cell-saturday {
+
+    -fx-border-width: 0px 0px 2px 0px;
+    -fx-border-color: grey;
+
+}
+
+.hbox-dayname-cell-sunday {
+
+    -fx-border-width: 0px 0px 2px 0px;
+    -fx-border-color: darkred;
+
+}
+
+.hbox-dayname-cell-today {
+
+    -fx-border-width: 0px 0px 2px 0px;
+    -fx-border-color: darkorange;
+
+}
+
+.hbox-dayname-cell-outOfMonthDay {
+
+    -fx-border-width: 0px 0px 2px 0px;
+    -fx-border-color: lightgray;
+
+}
+
+
+.label-event{
+	
+	-fx-font-size: 10pt;
+    -fx-font-family: "Lucida Console";
+    -fx-font-weight: bold;
+    -fx-text-fill: green;
+	
+	
+}
+
+.hbox-event{
+	
+	-fx-border-width: 1.5;
+	-fx-border-color: green;
+	-fx-border-radius: 3.0;
+	
+	
+}
+
+
+.button {
+	
+	-fx-background-color: #ccccff;
+	-fx-font-size: 9pt;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000080;
+	
+	
+}
+
+
+
+
+

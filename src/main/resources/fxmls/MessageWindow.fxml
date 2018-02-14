@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="158.0" prefWidth="460.0" styleClass="borderpane" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="us.infinz.pawelcwieka.organiser.controller.MessageWindowController">
+   <top>
+      <VBox alignment="CENTER" prefHeight="61.0" prefWidth="486.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="titleLabel" styleClass="label-day-window" stylesheets="@../stylesheet.css">
+               <font>
+                  <Font size="16.0" />
+               </font></Label>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox alignment="CENTER" prefHeight="282.0" prefWidth="328.0" spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text fx:id="messageText" fill="NAVY" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="444.0" />
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER" prefHeight="49.0" prefWidth="486.0" spacing="50.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#handleOkButton" prefHeight="28.0" prefWidth="61.0" stylesheets="@../stylesheet.css" text="OK" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
