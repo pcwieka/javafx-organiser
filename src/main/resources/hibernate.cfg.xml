@@ -13,6 +13,7 @@
         <property name="hbm2ddl.auto">update</property>
         <property name="hibernate.current_session_context_class">thread</property>
 
+        <mapping class="us.infinz.pawelcwieka.organiser.resource.User"/>
         <mapping class="us.infinz.pawelcwieka.organiser.resource.Event"/>
         <mapping class="us.infinz.pawelcwieka.organiser.resource.Localisation"/>
         <mapping class="us.infinz.pawelcwieka.organiser.resource.Forecast"/>
