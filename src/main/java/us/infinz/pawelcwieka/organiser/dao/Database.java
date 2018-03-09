@@ -1,10 +1,8 @@
 package us.infinz.pawelcwieka.organiser.dao;
 
-import us.infinz.pawelcwieka.organiser.resource.DatabaseEntity;
-
 import java.util.List;
 
-public interface Database<T extends DatabaseEntity> {
+public interface Database<T> {
 
     List<T> getListOfObjectsFromDatabase(String query);
     T getObjectFromDatabase(String query);

@@ -16,13 +16,11 @@ import us.infinz.pawelcwieka.organiser.dao.LocalisationDAO;
 import us.infinz.pawelcwieka.organiser.dao.LocalisationDAOImpl;
 import us.infinz.pawelcwieka.organiser.exception.EmailException;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
-import us.infinz.pawelcwieka.organiser.resource.Localisation;
+import us.infinz.pawelcwieka.organiser.resource.Localization;
 import us.infinz.pawelcwieka.organiser.service.CalendarCreator;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
 import us.infinz.pawelcwieka.organiser.util.Configuration;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -40,7 +38,7 @@ public class SettingsWindowController implements Initializable {
     @FXML
     private ComboBox refreshingForecastPeriodComboBox;
 
-    private ObservableList<Localisation> localisations;
+    private ObservableList<Localization> localizations;
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@gmail.com$", Pattern.CASE_INSENSITIVE);
@@ -50,19 +48,19 @@ public class SettingsWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        localisations = FXCollections.observableArrayList();
+        localizations = FXCollections.observableArrayList();
 
         LocalisationDAO localisationDAO = new LocalisationDAOImpl();
 
-        localisations.addAll(localisationDAO.findAllLocalisations());
+        localizations.addAll(localisationDAO.findAllLocalisations());
 
-        localisationComboBox.getItems().addAll(localisations);
+        localisationComboBox.getItems().addAll(localizations);
 
-        Localisation activeLocalisation = localisationDAO.findActiveLocalisation();
+        Localization activeLocalization = localisationDAO.findActiveLocalisation();
 
-        if(activeLocalisation!=null){
+        if(activeLocalization !=null){
 
-            localisationComboBox.setValue(activeLocalisation);
+            localisationComboBox.setValue(activeLocalization);
         }
 
         emailTextField.setText(Configuration.getProperty("email"));
@@ -114,19 +112,19 @@ public class SettingsWindowController implements Initializable {
         if(localisationString != null) {
 
             GoogleGeocoding googleGeocoding = new GoogleGeocoding(localisationString.toString());
-            Localisation localisation = googleGeocoding.getLocalisationDetails();
+            Localization localization = googleGeocoding.getLocalisationDetails();
 
-            if (localisation != null) {
+            if (localization != null) {
 
                 LocalisationDAO localisationDAO = new LocalisationDAOImpl();
 
-                localisations.clear();
+                localizations.clear();
 
-                localisations.addAll(localisationDAO.findAllLocalisations());
+                localizations.addAll(localisationDAO.findAllLocalisations());
 
-                for (Localisation lc : localisations) {
+                for (Localization lc : localizations) {
 
-                    if (lc.getUserTypedName().equals(localisation.getUserTypedName())) {
+                    if (lc.getUserTypedName().equals(localization.getUserTypedName())) {
 
                         localisationExistsAlready = true;
 
@@ -138,25 +136,25 @@ public class SettingsWindowController implements Initializable {
 
                 if (!localisationExistsAlready) {
 
-                    localisationDAO.saveLocalisation(localisation);
+                    localisationDAO.saveLocalisation(localization);
 
-                    localisations.add(localisation);
+                    localizations.add(localization);
 
                 } else {
 
-                    localisationDAO.updateLocalisationActiveColumn(localisation, true);
+                    localisationDAO.updateLocalisationActiveColumn(localization, true);
 
                 }
 
                 localisationComboBox.getItems().clear();
 
-                localisationComboBox.getItems().addAll(localisations);
+                localisationComboBox.getItems().addAll(localizations);
 
-                localisationComboBox.setValue(localisation);
+                localisationComboBox.setValue(localization);
 
                 DarkSky darkSky = new DarkSky();
 
-                Forecast forecast = darkSky.getForecast(localisation);
+                Forecast forecast = darkSky.getForecast(localization);
 
                 ForecastDAO forecastDAO = new ForecastDAOImpl();
                 forecastDAO.deleteAllForecasts();

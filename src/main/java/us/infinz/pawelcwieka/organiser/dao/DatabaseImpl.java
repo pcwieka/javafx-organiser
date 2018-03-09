@@ -2,11 +2,10 @@ package us.infinz.pawelcwieka.organiser.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import us.infinz.pawelcwieka.organiser.resource.DatabaseEntity;
 import us.infinz.pawelcwieka.organiser.util.HibernateUtil;
 import java.util.List;
 
-public class DatabaseImpl<T extends DatabaseEntity> implements Database<T>{
+public class DatabaseImpl<T> implements Database<T>{
 
     public  List<T> getListOfObjectsFromDatabase(String query){
 
@@ -85,7 +84,8 @@ public class DatabaseImpl<T extends DatabaseEntity> implements Database<T>{
             session.close();
         }
 
-        return object.getId();
+        //return object.getId();
+        return 1L;
 
 
     }

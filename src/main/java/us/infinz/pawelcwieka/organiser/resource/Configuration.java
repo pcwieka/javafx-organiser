@@ -9,11 +9,14 @@ public class Configuration extends AuditColumns{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "USER_ID",
+    @Column(name = "CONFIGURATION_ID",
             updatable = false,
             nullable = false,
             unique=true
     )
     private Long id;
+
+    @Column(name = "CONFIGURATION_FORECAST_REFRESH")
+    private String configurationForecastRefresh;
 
 }

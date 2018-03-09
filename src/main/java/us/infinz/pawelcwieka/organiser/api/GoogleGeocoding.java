@@ -5,7 +5,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
-import us.infinz.pawelcwieka.organiser.resource.Localisation;
+import us.infinz.pawelcwieka.organiser.resource.Localization;
 import us.infinz.pawelcwieka.organiser.exception.GoogleGeolocationException;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
 
@@ -22,12 +22,12 @@ public class GoogleGeocoding {
 
     }
 
-    public Localisation getLocalisationDetails() {
+    public Localization getLocalisationDetails() {
 
         //Unirest.setObjectMapper(new JacksonObjectMapperAdapter());
 
         HttpResponse<JsonNode> httpResponse = null;
-        Localisation localisation = null;
+        Localization localization = null;
 
         try {
 
@@ -43,7 +43,7 @@ public class GoogleGeocoding {
 
             }
 
-            localisation = getPlaceFromJSONObject(jsonObject);
+            localization = getPlaceFromJSONObject(jsonObject);
 
         } catch (UnirestException e) {
 
@@ -71,12 +71,12 @@ public class GoogleGeocoding {
             e.printStackTrace();
         }
 
-        return localisation;
+        return localization;
 
 
     }
 
-    private Localisation getPlaceFromJSONObject(JSONObject jsonObject) {
+    private Localization getPlaceFromJSONObject(JSONObject jsonObject) {
 
         JSONObject jsonLocation = jsonObject.getJSONArray("results")
                 .getJSONObject(0)
@@ -89,7 +89,7 @@ public class GoogleGeocoding {
                 .getJSONObject(0)
                 .getString("formatted_address");
 
-        return new Localisation(formattedAddress, this.userTypedPlaceName, latitude, longitude, true);
+        return new Localization(formattedAddress, this.userTypedPlaceName, latitude, longitude, true);
 
     }
 

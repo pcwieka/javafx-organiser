@@ -38,5 +38,11 @@ public class User extends AuditColumns{
     )
     Set<Event> events = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<Localization> localizations = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Configuration configuration;
+
 
 }

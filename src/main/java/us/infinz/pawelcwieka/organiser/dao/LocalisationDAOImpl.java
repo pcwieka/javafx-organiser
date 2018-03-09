@@ -1,42 +1,42 @@
 package us.infinz.pawelcwieka.organiser.dao;
 
-import us.infinz.pawelcwieka.organiser.resource.Localisation;
+import us.infinz.pawelcwieka.organiser.resource.Localization;
 
 import java.util.List;
 
 public class LocalisationDAOImpl implements LocalisationDAO{
 
-    private Database<Localisation> database = new DatabaseImpl<>();
+    private Database<Localization> database = new DatabaseImpl<>();
 
     @Override
-    public Localisation findActiveLocalisation() {
+    public Localization findActiveLocalisation() {
 
-        String query = "from LOCALISATION where LOCALISATION_ACTIVE = TRUE";
+        String query = "from LOCALIZATION where LOCALIZATION = TRUE";
 
         return database.getObjectFromDatabase(query);
 
     }
 
     @Override
-    public List<Localisation> findAllLocalisations() {
+    public List<Localization> findAllLocalisations() {
 
-        String query = "from LOCALISATION ";
+        String query = "from LOCALIZATION ";
 
         return database.getListOfObjectsFromDatabase(query);
 
     }
 
     @Override
-    public Long saveLocalisation(Localisation localisation) {
+    public Long saveLocalisation(Localization localization) {
 
-        return database.saveObjectToDatabase(localisation);
+        return database.saveObjectToDatabase(localization);
 
     }
 
     @Override
     public void updateLocalisationsActiveColumn(Boolean active) {
 
-        String query = "update LOCALISATION set LOCALISATION_ACTIVE = " + active.toString();
+        String query = "update LOCALIZATION set LOCALIZATION_ACTIVE = " + active.toString();
 
         System.out.println(query);
 
@@ -45,10 +45,10 @@ public class LocalisationDAOImpl implements LocalisationDAO{
     }
 
     @Override
-    public void updateLocalisationActiveColumn(Localisation localisation, Boolean active) {
+    public void updateLocalisationActiveColumn(Localization localization, Boolean active) {
 
-        String query = "update LOCALISATION set LOCALISATION_ACTIVE = " + active.toString()
-                + " WHERE LOCALISATION_USER_TYPED_NAME = '" + localisation.getUserTypedName()+ "'";
+        String query = "update LOCALIZATION set LOCALIZATION_ACTIVE = " + active.toString()
+                + " WHERE LOCALIZATION_USER_TYPED_NAME = '" + localization.getUserTypedName()+ "'";
 
         System.out.println(query);
 

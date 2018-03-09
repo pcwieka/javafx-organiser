@@ -1,6 +1,5 @@
 package us.infinz.pawelcwieka.organiser.service;
 
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -14,7 +13,7 @@ import us.infinz.pawelcwieka.organiser.dao.ForecastDAOImpl;
 import us.infinz.pawelcwieka.organiser.dao.LocalisationDAO;
 import us.infinz.pawelcwieka.organiser.dao.LocalisationDAOImpl;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
-import us.infinz.pawelcwieka.organiser.resource.Localisation;
+import us.infinz.pawelcwieka.organiser.resource.Localization;
 
 import java.util.List;
 
@@ -40,18 +39,18 @@ public class WeatherBoxCreator {
         weatherTopVBox.getChildren().clear();
 
         LocalisationDAO localisationDAO = new LocalisationDAOImpl();
-        Localisation localisation = localisationDAO.findActiveLocalisation();
+        Localization localization = localisationDAO.findActiveLocalisation();
 
         ForecastDAO forecastDAO = new ForecastDAOImpl();
         List<Forecast> forecastList = forecastDAO.findAllForecasts();
 
-        if (localisation != null && !forecastList.isEmpty()) {
+        if (localization != null && !forecastList.isEmpty()) {
 
             Forecast forecast = forecastList.get(0);
 
             DateTime time = new DateTime(forecast.getTime() * 1000);
 
-            Label localisationLabel = new Label(localisation.getFormattedAddress() + ", "
+            Label localisationLabel = new Label(localization.getFormattedAddress() + ", "
                     + time.dayOfMonth().getAsText() + " " + time.monthOfYear().getAsText() + ", "
                     + (time.hourOfDay().get() < 10 ? ("0" + time.hourOfDay().getAsText()) : time.hourOfDay().getAsText())
                     + ":" + (time.minuteOfHour().get() < 10 ? "0" + time.minuteOfHour().getAsText() : time.minuteOfHour().getAsText()));
@@ -94,7 +93,7 @@ public class WeatherBoxCreator {
 
                 LocalisationDAO lDAO = new LocalisationDAOImpl();
 
-                Localisation loc = lDAO.findActiveLocalisation();
+                Localization loc = lDAO.findActiveLocalisation();
 
                 if (loc != null) {
 

@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
 import us.infinz.pawelcwieka.organiser.resource.ForecastDaily;
-import us.infinz.pawelcwieka.organiser.resource.Localisation;
+import us.infinz.pawelcwieka.organiser.resource.Localization;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
 
 import java.util.ArrayList;
@@ -19,10 +19,10 @@ public class DarkSky {
     private static final String _APIKEY = "418fba598d0e757ba3a48d03e90f4737";
     private static final String _BASE_URL = "https://api.darksky.net/forecast/";
 
-    public Forecast getForecast(Localisation localisation){
+    public Forecast getForecast(Localization localization){
 
-        String latitude = localisation.getLatitude();
-        String longitude = localisation.getLongitude();
+        String latitude = localization.getLatitude();
+        String longitude = localization.getLongitude();
 
 
         HttpResponse<JsonNode> httpResponse = null;

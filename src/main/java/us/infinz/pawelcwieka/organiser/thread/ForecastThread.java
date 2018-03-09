@@ -7,7 +7,7 @@ import us.infinz.pawelcwieka.organiser.dao.ForecastDAOImpl;
 import us.infinz.pawelcwieka.organiser.dao.LocalisationDAO;
 import us.infinz.pawelcwieka.organiser.dao.LocalisationDAOImpl;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
-import us.infinz.pawelcwieka.organiser.resource.Localisation;
+import us.infinz.pawelcwieka.organiser.resource.Localization;
 import us.infinz.pawelcwieka.organiser.util.Configuration;
 
 public class ForecastThread extends Thread{
@@ -29,13 +29,13 @@ public class ForecastThread extends Thread{
 
                     LocalisationDAO localisationDAO = new LocalisationDAOImpl();
 
-                    Localisation localisation = localisationDAO.findActiveLocalisation();
+                    Localization localization = localisationDAO.findActiveLocalisation();
 
-                    if(localisation!=null){
+                    if(localization !=null){
 
                         DarkSky darkSky = new DarkSky();
 
-                        Forecast forecast = darkSky.getForecast(localisation);
+                        Forecast forecast = darkSky.getForecast(localization);
 
                         ForecastDAO forecastDAO = new ForecastDAOImpl();
                         forecastDAO.deleteAllForecasts();

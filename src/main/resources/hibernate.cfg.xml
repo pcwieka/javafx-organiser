@@ -4,18 +4,19 @@
 <hibernate-configuration>
     <session-factory>
 
-        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
-        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
-        <property name="hibernate.connection.url">jdbc:hsqldb:./data/organiser</property>
-        <property name="hibernate.connection.username">sa</property>
-        <property name="hibernate.connection.password"></property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/organiser</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">Alkormizar3</property>
         <property name="hibernate.show_sql">true</property>
-        <property name="hbm2ddl.auto">update</property>
+        <property name="hbm2ddl.auto">create</property>
         <property name="hibernate.current_session_context_class">thread</property>
 
         <mapping class="us.infinz.pawelcwieka.organiser.resource.User"/>
+        <mapping class="us.infinz.pawelcwieka.organiser.resource.Configuration"/>
         <mapping class="us.infinz.pawelcwieka.organiser.resource.Event"/>
-        <mapping class="us.infinz.pawelcwieka.organiser.resource.Localisation"/>
+        <mapping class="us.infinz.pawelcwieka.organiser.resource.Localization"/>
         <mapping class="us.infinz.pawelcwieka.organiser.resource.Forecast"/>
 
 
