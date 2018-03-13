@@ -1,29 +1,32 @@
 package us.infinz.pawelcwieka.organiser.resource;
 
-import lombok.Data;
-
 import javax.persistence.*;
 import java.util.Date;
 
-@Data
 @MappedSuperclass
-public class AuditColumns {
+public abstract class AuditColumns {
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "DATE_CREATED", nullable = false)
+    @Column(name = "DATE_CREATED", nullable = true)
     private Date dateCreated;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "DATE_UPDATED", nullable = false)
+    @Column(name = "DATE_UPDATED", nullable = true)
     private Date dateUpdated;
 
-    @PrePersist
-    protected void onCreate() {
-        dateUpdated = dateCreated = new Date();
+    public Date getDateCreated() {
+        return dateCreated;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        dateUpdated = new Date();
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(Date dateUpdated) {
+        this.dateUpdated = dateUpdated;
     }
 }

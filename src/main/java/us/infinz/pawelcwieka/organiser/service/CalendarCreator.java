@@ -1,11 +1,7 @@
 package us.infinz.pawelcwieka.organiser.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -19,6 +15,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -28,9 +25,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import us.infinz.pawelcwieka.organiser.dao.EventDAO;
-import us.infinz.pawelcwieka.organiser.dao.EventDAOImpl;
+import us.infinz.pawelcwieka.organiser.dao.UserDAO;
 import us.infinz.pawelcwieka.organiser.resource.Event;
+import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.thread.ForecastThread;
 
 
@@ -80,9 +77,11 @@ private static CalendarCreator instance = null;
 	private DateTime dateTimeMinusDays;
 	private int maxRowNumber;
 	private boolean newRowAdded=false;
-	private List<Event> allEventsForMonth;
+	private Set<Event> allUserEvents;
 
 	private BooleanProperty booleanProperty = new SimpleBooleanProperty(true);
+
+	private User user;
 
 	public CalendarCreator(){
 
@@ -93,6 +92,7 @@ private static CalendarCreator instance = null;
 				System.out.println("changed " + oldValue + "->" + newValue);
 
 				WeatherBoxCreator weatherBoxCreator = new WeatherBoxCreator(weatherTopVBox,weatherBottomVBox,weatherIcon,booleanProperty);
+				weatherBoxCreator.setUser(user);
 
 				Platform.runLater(() ->
 
@@ -103,10 +103,6 @@ private static CalendarCreator instance = null;
 
 			}
 		});
-
-
-		ForecastThread forecastThread = new ForecastThread(booleanProperty);
-		forecastThread.start();
 
 
 	}
@@ -126,10 +122,12 @@ private static CalendarCreator instance = null;
 		
 		
 		calendarGridPane.getChildren().clear();
-		
-		EventDAO eventDAO = new EventDAOImpl();
 
-		allEventsForMonth = eventDAO.findAllEventsForMonth(pickedDay);
+		System.out.println("USERNAME: " + user.getUserLogin() + ", USER_ID: " + user.getId());
+
+		UserDAO userDAO = new UserDAO();
+
+		allUserEvents = userDAO.findUser(user.getId()).getEvents();
 
 		createAllDayCellsAndEvents();
 		addDayNamesRowsAnTopAndBottom();
@@ -137,6 +135,7 @@ private static CalendarCreator instance = null;
 		calendarGridPane.getStyleClass().add("grid");
 
 		WeatherBoxCreator weatherBoxCreator = new WeatherBoxCreator(weatherTopVBox,weatherBottomVBox,weatherIcon,booleanProperty);
+		weatherBoxCreator.setUser(user);
 		weatherBoxCreator.createWeatherVBox();
 		
 		
@@ -384,7 +383,7 @@ private static CalendarCreator instance = null;
 		
 		List<Event> eventsForTheDayList = new ArrayList<Event>();
 		
-		for(Event event : allEventsForMonth){
+		for(Event event : allUserEvents){
 
 			DateTime eventDay = Clock.getDateTimeFromTimeStamp(event.getDate());
 			
@@ -494,7 +493,7 @@ private static CalendarCreator instance = null;
 
 			}
 
-			dEWC.init(selectedDay,labelId);
+			dEWC.init(selectedDay,labelId, user);
 
 			Stage stage = new Stage();
 			Scene primaryScene = new Scene(root);
@@ -510,6 +509,13 @@ private static CalendarCreator instance = null;
 		}
 		
 		
+	}
+
+	public void startThread(){
+
+		ForecastThread forecastThread = new ForecastThread(user,booleanProperty);
+		forecastThread.start();
+
 	}
 	
 	
@@ -561,5 +567,9 @@ private static CalendarCreator instance = null;
 
 	public void setWeatherIcon(ImageView weatherIcon) {
 		this.weatherIcon = weatherIcon;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

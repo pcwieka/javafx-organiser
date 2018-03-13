@@ -12,21 +12,22 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
 import us.infinz.pawelcwieka.organiser.api.Email;
-import us.infinz.pawelcwieka.organiser.dao.EventDAOImpl;
+import us.infinz.pawelcwieka.organiser.dao.EventDAO;
+import us.infinz.pawelcwieka.organiser.dao.UserDAO;
 import us.infinz.pawelcwieka.organiser.exception.EmailException;
+import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.service.CalendarCreator;
-import us.infinz.pawelcwieka.organiser.dao.DatabaseImpl;
 import us.infinz.pawelcwieka.organiser.resource.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import us.infinz.pawelcwieka.organiser.dao.EventDAO;
+import us.infinz.pawelcwieka.organiser.dao.IEventDAO;
 import us.infinz.pawelcwieka.organiser.service.Clock;
 import us.infinz.pawelcwieka.organiser.service.ICalendar;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
@@ -76,12 +77,14 @@ public class DayEventWindowController implements Initializable{
 	private ObservableList<String> hourOptions;
 	private ObservableList<String> minuteOptions;
 
+	private User user;
+
 	
 
 	@Override
     public void initialize(URL url, ResourceBundle rb) {
 
-		eventDAO = new EventDAOImpl();
+		eventDAO = new EventDAO();
 		calendarCreator = CalendarCreator.getInstance();
 		
 		addTextLimiter(labelTextField,10);
@@ -129,8 +132,14 @@ public class DayEventWindowController implements Initializable{
 	private void handleSaveButton() {
 		
 		setEventFields();
-		
-		eventDAO.saveEvent(event);
+
+		UserDAO userDAO = new UserDAO();
+		User user = userDAO.findUser(1L);
+
+		user.getEvents().add(event);
+
+		userDAO.saveUser(user);
+
 		calendarCreator.createCalendar();
 		
 		Stage stage = (Stage) quitButton.getScene().getWindow();
@@ -143,8 +152,13 @@ public class DayEventWindowController implements Initializable{
 	
 	@FXML
 	private void handleDeleteButton(){
-		
-		eventDAO.deleteEvent(event);
+
+		UserDAO userDAO = new UserDAO();
+
+		user = userDAO.findUser(user.getId());
+
+		user.getEvents().remove(event);
+
 		calendarCreator.createCalendar();
 		
 		Stage stage = (Stage) quitButton.getScene().getWindow();
@@ -290,10 +304,11 @@ public class DayEventWindowController implements Initializable{
 		
 	}
 
-	public void init(DateTime date, Long eventId){
+	public void init(DateTime date, Long eventId, User user){
 
 		this.eventId = eventId;
 		this.date = date;
+		this.user = user;
 
 		setDayLabelText();
 
@@ -328,7 +343,7 @@ public class DayEventWindowController implements Initializable{
 
 	private Event getEventById(Long eventId){
 
-		return eventDAO.findEvent(eventId);
+		return eventDAO.getEventFromDatabase(eventId);
 
 	}
 	

@@ -2,21 +2,24 @@ package us.infinz.pawelcwieka.organiser.thread;
 
 import javafx.beans.property.BooleanProperty;
 import us.infinz.pawelcwieka.organiser.api.DarkSky;
+import us.infinz.pawelcwieka.organiser.dao.IForecastDAO;
 import us.infinz.pawelcwieka.organiser.dao.ForecastDAO;
-import us.infinz.pawelcwieka.organiser.dao.ForecastDAOImpl;
+import us.infinz.pawelcwieka.organiser.dao.ILocalisationDAO;
 import us.infinz.pawelcwieka.organiser.dao.LocalisationDAO;
-import us.infinz.pawelcwieka.organiser.dao.LocalisationDAOImpl;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
 import us.infinz.pawelcwieka.organiser.resource.Localization;
+import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.util.Configuration;
 
 public class ForecastThread extends Thread{
 
     private BooleanProperty booleanProperty;
+    private User user;
 
-    public ForecastThread(BooleanProperty booleanProperty){
+    public ForecastThread(User user, BooleanProperty booleanProperty){
 
         this.booleanProperty = booleanProperty;
+        this.user = user;
 
     }
 
@@ -27,9 +30,9 @@ public class ForecastThread extends Thread{
                 try {
 
 
-                    LocalisationDAO localisationDAO = new LocalisationDAOImpl();
+                    ILocalisationDAO localisationDAO = new LocalisationDAO();
 
-                    Localization localization = localisationDAO.findActiveLocalisation();
+                    Localization localization = localisationDAO.findActiveLocalisation(user);
 
                     if(localization !=null){
 
@@ -37,9 +40,7 @@ public class ForecastThread extends Thread{
 
                         Forecast forecast = darkSky.getForecast(localization);
 
-                        ForecastDAO forecastDAO = new ForecastDAOImpl();
-                        forecastDAO.deleteAllForecasts();
-                        forecastDAO.saveForecast(forecast);
+                        localization.setForecast(forecast);
 
                         booleanProperty.set(!booleanProperty.get());
 

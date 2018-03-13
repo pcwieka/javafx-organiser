@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+
 @Entity(name = "USER")
 public class User extends AuditColumns{
 
@@ -27,22 +27,74 @@ public class User extends AuditColumns{
     @Column(name = "USER_EMAIL")
     private String userEmail;
 
-    @Column(name = "USER_DATE_CREATED")
-    private String userDateCreated;
-
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(fetch = FetchType.LAZY,cascade = { CascadeType.ALL})
     @JoinTable(
             name = "SHARED_EVENTS",
             joinColumns = { @JoinColumn(name = "USER_ID") },
             inverseJoinColumns = { @JoinColumn(name = "EVENT_ID") }
     )
-    Set<Event> events = new HashSet<>();
+    Set<Event> events;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private Set<Localization> localizations = new HashSet<>();
+    private Set<Localization> localizations;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "CONFIGURATION_ID")
     private Configuration configuration;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
+    }
+
+    public Set<Localization> getLocalizations() {
+        return localizations;
+    }
+
+    public void setLocalizations(Set<Localization> localizations) {
+        this.localizations = localizations;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
 }

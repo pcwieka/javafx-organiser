@@ -22,12 +22,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.joda.time.DateTime;
+import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.service.CalendarCreator;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
-import us.infinz.pawelcwieka.organiser.service.WeatherBoxCreator;
-import us.infinz.pawelcwieka.organiser.thread.ForecastThread;
 
 
 public class CalendarOrganiserMainWindowController implements Initializable {
@@ -56,6 +55,8 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 	private DateTime pickedDay;
 
 	private CalendarCreator calendarCreator = CalendarCreator.getInstance();
+
+	private User user;
 	
 	
 	@Override
@@ -71,13 +72,13 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 		Image settingImg = new Image("/icons/settings.png");
 		settingIcon.setImage(settingImg);
 
-		calendarCreator.setCurrentMonthLabel(currentMonthLabel);
-		calendarCreator.setCalendarGridPane(calendarGridPane);
-		calendarCreator.setWeatherBottomVBox(weatherBottomVBox);
-		calendarCreator.setWeatherTopVBox(weatherTopVBox);
-		calendarCreator.setWeatherIcon(weatherIcon);
+				calendarCreator.setCurrentMonthLabel(currentMonthLabel);
+				calendarCreator.setCalendarGridPane(calendarGridPane);
+				calendarCreator.setWeatherBottomVBox(weatherBottomVBox);
+				calendarCreator.setWeatherTopVBox(weatherTopVBox);
+				calendarCreator.setWeatherIcon(weatherIcon);
+				calendarCreator.createCalendar();
 
-		calendarCreator.createCalendar();
 
 
 	}
@@ -135,6 +136,9 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 
 			Parent root = (Parent)loader.load();
 
+			SettingsWindowController settingsWindowController = loader.getController();
+			settingsWindowController.init(user);
+
 			Stage stage = new Stage();
 			Scene primaryScene = new Scene(root);
 			primaryScene.getStylesheets().add("stylesheet.css");
@@ -148,8 +152,11 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 			e.printStackTrace();
 		}
 
+	}
 
+	public void setParams(User user){
 
+		this.user = user;
 
 	}
 

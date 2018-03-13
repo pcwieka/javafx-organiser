@@ -8,12 +8,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.joda.time.DateTime;
 import us.infinz.pawelcwieka.organiser.api.DarkSky;
+import us.infinz.pawelcwieka.organiser.dao.IForecastDAO;
 import us.infinz.pawelcwieka.organiser.dao.ForecastDAO;
-import us.infinz.pawelcwieka.organiser.dao.ForecastDAOImpl;
+import us.infinz.pawelcwieka.organiser.dao.ILocalisationDAO;
 import us.infinz.pawelcwieka.organiser.dao.LocalisationDAO;
-import us.infinz.pawelcwieka.organiser.dao.LocalisationDAOImpl;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
 import us.infinz.pawelcwieka.organiser.resource.Localization;
+import us.infinz.pawelcwieka.organiser.resource.User;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class WeatherBoxCreator {
     private VBox weatherBottomVBox;
     private ImageView weatherIcon;
     private BooleanProperty booleanProperty;
+
+    private User user;
 
     public WeatherBoxCreator(VBox weatherTopVBox, VBox weatherBottomVBox, ImageView weatherIcon,BooleanProperty booleanProperty) {
 
@@ -38,15 +41,27 @@ public class WeatherBoxCreator {
 
         weatherTopVBox.getChildren().clear();
 
-        LocalisationDAO localisationDAO = new LocalisationDAOImpl();
-        Localization localization = localisationDAO.findActiveLocalisation();
+        ILocalisationDAO localisationDAO = new LocalisationDAO();
+        Localization localization = localisationDAO.findActiveLocalisation(user);
 
-        ForecastDAO forecastDAO = new ForecastDAOImpl();
-        List<Forecast> forecastList = forecastDAO.findAllForecasts();
+        if(localization != null){
 
-        if (localization != null && !forecastList.isEmpty()) {
+        DarkSky darkSky = new DarkSky();
+        Forecast forecast = darkSky.getForecast(localization);
 
-            Forecast forecast = forecastList.get(0);
+        Forecast prevoiusForecast = localization.getForecast();
+
+        Long forecastId = null;
+
+        if(prevoiusForecast != null){
+
+                forecastId = prevoiusForecast.getId();
+                forecast.setId(forecastId);
+
+        }
+
+        localization.setForecast(forecast);
+
 
             DateTime time = new DateTime(forecast.getTime() * 1000);
 
@@ -91,17 +106,15 @@ public class WeatherBoxCreator {
 
             weatherIcon.setOnMouseClicked((MouseEvent e) -> {
 
-                LocalisationDAO lDAO = new LocalisationDAOImpl();
+                ILocalisationDAO lDAO = new LocalisationDAO();
 
-                Localization loc = lDAO.findActiveLocalisation();
+                Localization loc = lDAO.findActiveLocalisation(user);
 
                 if (loc != null) {
 
-                    DarkSky darkSky = new DarkSky();
-
                     Forecast forcst = darkSky.getForecast(loc);
 
-                    ForecastDAO forcstDAO = new ForecastDAOImpl();
+                    IForecastDAO forcstDAO = new ForecastDAO();
                     forcstDAO.deleteAllForecasts();
                     forcstDAO.saveForecast(forcst);
 
@@ -161,4 +174,7 @@ public class WeatherBoxCreator {
     }
 
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

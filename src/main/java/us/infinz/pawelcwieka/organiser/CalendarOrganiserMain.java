@@ -20,7 +20,7 @@ public class CalendarOrganiserMain extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 
-		showWindow("CalendarOrganiserMainWindow.fxml","Organizer", true, primaryStage, CalendarOrganiserMain.class);
+		showWindow("LoginWindow.fxml","Organizer: Logowanie", false, primaryStage, CalendarOrganiserMain.class);
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -39,7 +39,7 @@ public class CalendarOrganiserMain extends Application {
 	}
 
 
-	public static void showWindow(String resource, String title, boolean resizable, Stage stage, Class cl){
+	private void showWindow(String resource, String title, boolean resizable, Stage stage, Class cl){
 
 		try {
 			FXMLLoader loader = new FXMLLoader(cl.getResource("/fxmls/" + resource));

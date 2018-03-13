@@ -10,16 +10,14 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import us.infinz.pawelcwieka.organiser.api.DarkSky;
 import us.infinz.pawelcwieka.organiser.api.GoogleGeocoding;
-import us.infinz.pawelcwieka.organiser.dao.ForecastDAO;
-import us.infinz.pawelcwieka.organiser.dao.ForecastDAOImpl;
-import us.infinz.pawelcwieka.organiser.dao.LocalisationDAO;
-import us.infinz.pawelcwieka.organiser.dao.LocalisationDAOImpl;
+import us.infinz.pawelcwieka.organiser.dao.*;
 import us.infinz.pawelcwieka.organiser.exception.EmailException;
+import us.infinz.pawelcwieka.organiser.resource.Configuration;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
 import us.infinz.pawelcwieka.organiser.resource.Localization;
+import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.service.CalendarCreator;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
-import us.infinz.pawelcwieka.organiser.util.Configuration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -40,6 +38,8 @@ public class SettingsWindowController implements Initializable {
 
     private ObservableList<Localization> localizations;
 
+    private User user;
+
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@gmail.com$", Pattern.CASE_INSENSITIVE);
 
@@ -48,33 +48,15 @@ public class SettingsWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        localizations = FXCollections.observableArrayList();
-
-        LocalisationDAO localisationDAO = new LocalisationDAOImpl();
-
-        localizations.addAll(localisationDAO.findAllLocalisations());
-
-        localisationComboBox.getItems().addAll(localizations);
-
-        Localization activeLocalization = localisationDAO.findActiveLocalisation();
-
-        if(activeLocalization !=null){
-
-            localisationComboBox.setValue(activeLocalization);
-        }
-
-        emailTextField.setText(Configuration.getProperty("email"));
-
-        refreshingForecastPeriodComboBox.getItems().addAll("5", "10", "15","20","30","45","60");
-
-        refreshingForecastPeriodComboBox.setValue(Configuration.getProperty("forecast"));
-
-
 
     }
 
     @FXML
     private void handleSaveButton(){
+
+        IUserDAO userDAO = new UserDAO();
+
+        user = userDAO.findUser(user.getId());
 
         boolean localisationExistsAlready = false;
 
@@ -104,8 +86,14 @@ public class SettingsWindowController implements Initializable {
 
         }
 
-        Configuration.saveProperty("email",emailTextField.getText());
-        Configuration.saveProperty("forecast", (String) refreshingForecastPeriodComboBox.getValue());
+        //Configuration.saveProperty("email",emailTextField.getText());
+        user.setUserEmail(emailTextField.getText());
+        //Configuration.saveProperty("forecast", (String) refreshingForecastPeriodComboBox.getValue());
+
+        Configuration configuration = new Configuration();
+        configuration.setConfigurationForecastRefresh((String)refreshingForecastPeriodComboBox.getValue());
+
+        user.setConfiguration(configuration);
 
         Object localisationString = localisationComboBox.getValue();
 
@@ -116,33 +104,38 @@ public class SettingsWindowController implements Initializable {
 
             if (localization != null) {
 
-                LocalisationDAO localisationDAO = new LocalisationDAOImpl();
+                ILocalisationDAO localisationDAO = new LocalisationDAO();
 
                 localizations.clear();
 
-                localizations.addAll(localisationDAO.findAllLocalisations());
+                localizations.addAll(user.getLocalizations());
+
+                Long localizationId = null;
 
                 for (Localization lc : localizations) {
 
                     if (lc.getUserTypedName().equals(localization.getUserTypedName())) {
 
                         localisationExistsAlready = true;
+                        localizationId = lc.getId();
+                        break;
 
                     }
 
                 }
 
-                localisationDAO.updateLocalisationsActiveColumn(false);
+                localisationDAO.updateLocalisationsActiveColumn(user, false);
 
                 if (!localisationExistsAlready) {
 
-                    localisationDAO.saveLocalisation(localization);
+                    user.getLocalizations().add(localization);
+                    userDAO.saveUser(user);
 
                     localizations.add(localization);
 
                 } else {
 
-                    localisationDAO.updateLocalisationActiveColumn(localization, true);
+                    localisationDAO.updateLocalisationActiveColumn(user,localization, true);
 
                 }
 
@@ -156,9 +149,8 @@ public class SettingsWindowController implements Initializable {
 
                 Forecast forecast = darkSky.getForecast(localization);
 
-                ForecastDAO forecastDAO = new ForecastDAOImpl();
-                forecastDAO.deleteAllForecasts();
-                forecastDAO.saveForecast(forecast);
+                localization.setForecast(forecast);
+                localization.setUser(user);
 
             }
 
@@ -183,6 +175,33 @@ public class SettingsWindowController implements Initializable {
     private boolean validateEmailAddress(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
         return matcher.find();
+    }
+
+    public void init(User user){
+
+        localizations = FXCollections.observableArrayList();
+
+        IUserDAO userDAO = new UserDAO();
+
+        this.user = userDAO.findUser(user.getId());
+
+        localisationComboBox.getItems().addAll(localizations);
+
+        ILocalisationDAO localisationDAO = new LocalisationDAO();
+
+        Localization activeLocalization = localisationDAO.findActiveLocalisation(user);
+
+        if(activeLocalization !=null){
+
+            localisationComboBox.setValue(activeLocalization);
+        }
+
+        emailTextField.setText(user.getUserEmail());
+
+        refreshingForecastPeriodComboBox.getItems().addAll("5", "10", "15","20","30","45","60");
+
+        refreshingForecastPeriodComboBox.setValue(user.getConfiguration().getConfigurationForecastRefresh());
+
     }
 
 
