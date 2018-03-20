@@ -3,12 +3,7 @@ package us.infinz.pawelcwieka.organiser.dao;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import us.infinz.pawelcwieka.organiser.resource.AuditColumns;
-import us.infinz.pawelcwieka.organiser.resource.User;
-import us.infinz.pawelcwieka.organiser.util.HibernateSession;
 import us.infinz.pawelcwieka.organiser.util.HibernateUtil;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class Database<T> implements IDatabase<T> {

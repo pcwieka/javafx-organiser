@@ -10,6 +10,7 @@ import us.infinz.pawelcwieka.organiser.dao.UserDAO;
 import us.infinz.pawelcwieka.organiser.exception.EmailException;
 import us.infinz.pawelcwieka.organiser.resource.Configuration;
 import us.infinz.pawelcwieka.organiser.resource.User;
+import us.infinz.pawelcwieka.organiser.service.CryptWithMD5;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
 
 import java.net.URL;
@@ -103,8 +104,9 @@ public class RegisterWindowController implements Initializable {
                     User user = new User();
 
                     user.setUserLogin(login);
-                    user.setUserPassword(password1);
+                    user.setUserPassword(CryptWithMD5.cryptWithMD5(password1));
                     user.setUserEmail(email);
+                    user.setAuthorization(true);
 
                     Configuration configuration = new Configuration();
                     configuration.setConfigurationForecastRefresh("5");

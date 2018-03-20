@@ -5,7 +5,6 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import us.infinz.pawelcwieka.organiser.resource.Event;
 import us.infinz.pawelcwieka.organiser.resource.User;
-import us.infinz.pawelcwieka.organiser.util.HibernateSession;
 import us.infinz.pawelcwieka.organiser.util.HibernateUtil;
 
 import java.util.List;

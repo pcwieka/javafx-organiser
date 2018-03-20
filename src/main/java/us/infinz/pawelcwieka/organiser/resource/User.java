@@ -30,6 +30,9 @@ public class User extends AuditColumns{
     @Column(name = "USER_SESSION_ACTIVE")
     private Boolean sessionActive;
 
+    @Column(name = "USER_AUTHORIZATION")
+    private Boolean authorization;
+
     @ManyToMany(fetch = FetchType.LAZY,cascade = { CascadeType.ALL})
     @JoinTable(
             name = "SHARED_EVENTS",
@@ -107,5 +110,13 @@ public class User extends AuditColumns{
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getAuthorization() {
+        return authorization;
+    }
+
+    public void setAuthorization(Boolean authorization) {
+        this.authorization = authorization;
     }
 }

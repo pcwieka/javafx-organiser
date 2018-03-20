@@ -17,6 +17,7 @@ import us.infinz.pawelcwieka.organiser.dao.UserDAO;
 import us.infinz.pawelcwieka.organiser.resource.Configuration;
 import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.service.CalendarCreator;
+import us.infinz.pawelcwieka.organiser.service.CryptWithMD5;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
 import us.infinz.pawelcwieka.organiser.service.UserSession;
 
@@ -48,12 +49,10 @@ public class LoginWindowController implements Initializable {
     private void handleLoginButton(){
 
         String login = loginTextField.getText();
-        String password = passwordTextField.getText();
-
+        String password = CryptWithMD5.cryptWithMD5(passwordTextField.getText());
 
         UserDAO userDAO = new UserDAO();
         User user = userDAO.findUserByLogin(login);
-
 
         if(user == null ){
 
@@ -65,7 +64,7 @@ public class LoginWindowController implements Initializable {
 
             messageWindowProvider.showMessageWindow();
 
-        } else if (!user.getUserPassword().equals(password)){
+        } else if (user.getAuthorization() && !user.getUserPassword().trim().equals(password)){
 
             MessageWindowProvider messageWindowProvider = new MessageWindowProvider(
 
@@ -122,11 +121,7 @@ public class LoginWindowController implements Initializable {
         }
 
 
-
-
-
-
-    };
+    }
 
     @FXML
     private void handleRegisterButton(){
@@ -150,6 +145,5 @@ public class LoginWindowController implements Initializable {
             e.printStackTrace();
         }
 
-
-    };
+    }
 }
