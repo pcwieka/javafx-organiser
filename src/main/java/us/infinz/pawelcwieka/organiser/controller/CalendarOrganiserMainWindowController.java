@@ -21,13 +21,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.joda.time.DateTime;
+import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.service.CalendarCreator;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
-import us.infinz.pawelcwieka.organiser.service.WeatherBoxCreator;
-import us.infinz.pawelcwieka.organiser.thread.ForecastThread;
+import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
+import us.infinz.pawelcwieka.organiser.service.UserSession;
 
 
 public class CalendarOrganiserMainWindowController implements Initializable {
@@ -43,6 +45,8 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 	@FXML
 	private ImageView weatherIcon;
 	@FXML
+	private ImageView refreshIcon;
+	@FXML
 	private Button prevMonthButton;
 	@FXML
 	private Button nextMonthButton;
@@ -52,10 +56,17 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 	private Button settingsButton;
 	@FXML
 	private Label currentMonthLabel;
+	@FXML
+	private Button logOutButton;
+	@FXML
+	private Button refreshButton;
+
 
 	private DateTime pickedDay;
 
 	private CalendarCreator calendarCreator = CalendarCreator.getInstance();
+
+	private User user;
 	
 	
 	@Override
@@ -71,13 +82,16 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 		Image settingImg = new Image("/icons/settings.png");
 		settingIcon.setImage(settingImg);
 
-		calendarCreator.setCurrentMonthLabel(currentMonthLabel);
-		calendarCreator.setCalendarGridPane(calendarGridPane);
-		calendarCreator.setWeatherBottomVBox(weatherBottomVBox);
-		calendarCreator.setWeatherTopVBox(weatherTopVBox);
-		calendarCreator.setWeatherIcon(weatherIcon);
+		Image refreshImg = new Image("/icons/refreshIcon.png");
+		refreshIcon.setImage(refreshImg);
 
-		calendarCreator.createCalendar();
+				calendarCreator.setCurrentMonthLabel(currentMonthLabel);
+				calendarCreator.setCalendarGridPane(calendarGridPane);
+				calendarCreator.setWeatherBottomVBox(weatherBottomVBox);
+				calendarCreator.setWeatherTopVBox(weatherTopVBox);
+				calendarCreator.setWeatherIcon(weatherIcon);
+				calendarCreator.createCalendar();
+
 
 
 	}
@@ -128,12 +142,68 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 	}
 
 	@FXML
+	private void handleLogOutButton(){
+
+		UserSession.setUserSessionActive(user,false);
+
+		Stage mainStage = (Stage) calendarGridPane.getScene().getWindow();
+		mainStage.close();
+
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxmls/LoginWindow.fxml"));
+
+			Parent root = (Parent)loader.load();
+
+			Stage stage = new Stage();
+			Scene primaryScene = new Scene(root);
+			primaryScene.getStylesheets().add("stylesheet.css");
+			stage.setTitle("Organizer: Logowanie");
+			stage.setScene(primaryScene);
+			stage.setResizable(false);
+
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				@Override
+				public void handle(WindowEvent t) {
+					Platform.exit();
+					System.exit(0);
+				}
+			});
+
+			stage.show();
+
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+
+
+	}
+
+
+	@FXML
+	private void handleRefreshButton(){
+
+		calendarCreator.createCalendar();
+
+		MessageWindowProvider messageWindowProvider = new MessageWindowProvider(
+
+				"Uwaga!",
+				"Odświeżono listę udostępnionych wydarzeń."
+		);
+
+		messageWindowProvider.showMessageWindow();
+
+	}
+
+	@FXML
 	private void handleSettingsButton(){
 
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxmls/SettingsWindow.fxml"));
 
 			Parent root = (Parent)loader.load();
+
+			SettingsWindowController settingsWindowController = loader.getController();
+			settingsWindowController.init(user);
 
 			Stage stage = new Stage();
 			Scene primaryScene = new Scene(root);
@@ -148,8 +218,11 @@ public class CalendarOrganiserMainWindowController implements Initializable {
 			e.printStackTrace();
 		}
 
+	}
 
+	public void setParams(User user){
 
+		this.user = user;
 
 	}
 

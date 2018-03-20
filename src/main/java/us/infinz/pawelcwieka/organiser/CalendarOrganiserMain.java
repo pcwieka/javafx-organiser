@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.thread.ForecastThread;
 
 public class CalendarOrganiserMain extends Application {
@@ -19,7 +20,7 @@ public class CalendarOrganiserMain extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 
-		showWindow("CalendarOrganiserMainWindow.fxml","Organizer", true, primaryStage, CalendarOrganiserMain.class);
+		showWindow("LoginWindow.fxml","Organizer: Logowanie", false, primaryStage, CalendarOrganiserMain.class);
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -38,7 +39,7 @@ public class CalendarOrganiserMain extends Application {
 	}
 
 
-	public static void showWindow(String resource, String title, boolean resizable, Stage stage, Class cl){
+	private void showWindow(String resource, String title, boolean resizable, Stage stage, Class cl){
 
 		try {
 			FXMLLoader loader = new FXMLLoader(cl.getResource("/fxmls/" + resource));

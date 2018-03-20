@@ -39,7 +39,7 @@
                <children>
                   <VBox alignment="CENTER" prefHeight="87.0" prefWidth="425.0">
                      <children>
-                        <HBox alignment="CENTER" prefHeight="43.0" prefWidth="425.0" spacing="10.0">
+                        <HBox alignment="CENTER" prefHeight="143.0" prefWidth="412.0" spacing="10.0">
                            <children>
                               <Button fx:id="prevMonthButton" mnemonicParsing="false" onAction="#handlePrevMonthButton" prefWidth="50.0" text="&lt;" />
                               <Label fx:id="currentMonthLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="15.0" prefWidth="210.0" text="Label">
@@ -49,7 +49,11 @@
                               <Button fx:id="nextMonthButton" mnemonicParsing="false" onAction="#handleNextMonthButton" prefWidth="50.0" text="&gt;" />
                            </children>
                         </HBox>
-                        <Button fx:id="showCurrentMonth" mnemonicParsing="false" onAction="#handleShowCurrentMonth" text="Bieżący miesiąc" />
+                        <HBox alignment="CENTER" prefHeight="121.0" prefWidth="412.0">
+                           <children>
+                              <Button fx:id="showCurrentMonth" mnemonicParsing="false" onAction="#handleShowCurrentMonth" text="Bieżący miesiąc" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="100.0" prefWidth="570.0" HBox.hgrow="ALWAYS">
@@ -69,13 +73,31 @@
                         </VBox>
                         <VBox fx:id="weatherBottomVBox" alignment="CENTER" prefHeight="17.0" prefWidth="512.0" />
                      </children></VBox>
-                  <VBox alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0">
+                  <HBox prefHeight="100.0" prefWidth="70.0" />
+                  <VBox alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" prefHeight="100.0" prefWidth="196.0" HBox.hgrow="NEVER">
                      <children>
-                        <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#handleSettingsButton">
-                           <graphic>
-                              <ImageView fx:id="settingIcon" fitHeight="22.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true" />
-                           </graphic>
-                        </Button>
+                        <HBox alignment="CENTER" prefHeight="37.0" prefWidth="102.0">
+                           <children>
+                              <Button fx:id="logOutButton" mnemonicParsing="false" onAction="#handleLogOutButton" prefHeight="32.0" prefWidth="88.0" text="Wyloguj" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="34.0" prefWidth="102.0" spacing="10.0">
+                           <children>
+                              <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#handleSettingsButton">
+                                 <graphic>
+                                    <ImageView fx:id="settingIcon" fitHeight="22.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#handleRefreshButton">
+                                 <graphic>
+                                    <ImageView fx:id="refreshIcon" fitHeight="22.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets top="4.0" />
+                           </padding>
+                        </HBox>
                      </children>
                      <padding>
                         <Insets right="13.0" />

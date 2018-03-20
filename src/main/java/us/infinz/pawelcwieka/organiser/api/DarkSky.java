@@ -5,10 +5,11 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
 import us.infinz.pawelcwieka.organiser.resource.ForecastDaily;
-import us.infinz.pawelcwieka.organiser.resource.Localisation;
+import us.infinz.pawelcwieka.organiser.resource.Localization;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
 
 import java.util.ArrayList;
@@ -19,10 +20,10 @@ public class DarkSky {
     private static final String _APIKEY = "418fba598d0e757ba3a48d03e90f4737";
     private static final String _BASE_URL = "https://api.darksky.net/forecast/";
 
-    public Forecast getForecast(Localisation localisation){
+    public Forecast getForecast(Localization localization){
 
-        String latitude = localisation.getLatitude();
-        String longitude = localisation.getLongitude();
+        String latitude = localization.getLatitude();
+        String longitude = localization.getLongitude();
 
 
         HttpResponse<JsonNode> httpResponse = null;
@@ -49,13 +50,26 @@ public class DarkSky {
 
             e.printStackTrace();
 
+        } catch (JSONException e){
+
+            MessageWindowProvider messageWindowProvider = new MessageWindowProvider(
+
+                    "Błąd pobrania prognozy pogody",
+                    "Nie można pobrać prognozy pogody dla podanej lokalizacji. \n" +
+                            "Niekompletne dane pobrane z DarkSky. Skontaktuj się z Administratorem."
+            );
+
+            messageWindowProvider.showMessageWindow();
+
+            e.printStackTrace();
+
         }
 
         return forecast;
 
     }
 
-    private Forecast getForecastFromJSONObject(JSONObject jsonObject) {
+    private Forecast getForecastFromJSONObject(JSONObject jsonObject) throws JSONException{
 
         Forecast forecast = new Forecast();
 
@@ -80,7 +94,7 @@ public class DarkSky {
 
         List<ForecastDaily> forecastDailyList = new ArrayList<>();
 
-        for(int i = 0; i < jsonForecastDaily.length();i++){
+        /*for(int i = 0; i < jsonForecastDaily.length();i++){
 
             ForecastDaily forecastDaily = new ForecastDaily();
 
@@ -98,7 +112,7 @@ public class DarkSky {
 
             forecastDailyList.add(forecastDaily);
 
-        }
+        }*/
 
         forecast.setNextWeekForecast(forecastDailyList);
 
