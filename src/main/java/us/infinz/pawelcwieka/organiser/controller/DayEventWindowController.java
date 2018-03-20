@@ -3,15 +3,21 @@ package us.infinz.pawelcwieka.organiser.controller;
 import java.io.*;
 import java.net.URL;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
@@ -27,11 +33,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import us.infinz.pawelcwieka.organiser.dao.IEventDAO;
 import us.infinz.pawelcwieka.organiser.service.Clock;
 import us.infinz.pawelcwieka.organiser.service.ICalendar;
 import us.infinz.pawelcwieka.organiser.service.MessageWindowProvider;
-import us.infinz.pawelcwieka.organiser.util.Configuration;
 
 
 public class DayEventWindowController implements Initializable{
@@ -66,6 +70,8 @@ public class DayEventWindowController implements Initializable{
 	private Button quitButton;
 	@FXML
 	private Button deleteButton;
+	@FXML
+	private ScrollPane userListScrollPane;
 	
 	
 	private DateTime date;
@@ -116,6 +122,7 @@ public class DayEventWindowController implements Initializable{
 		startMinutesComboBox.getItems().addAll(minuteOptions);
 		endMinutesComboBox.getItems().addAll(minuteOptions);
 
+		userListScrollPane.setFitToWidth(true);
 
 		Image iCalImag = new Image("/icons/ical.png");
 		iCalendarImageView.setImage(iCalImag);
@@ -133,12 +140,37 @@ public class DayEventWindowController implements Initializable{
 		
 		setEventFields();
 
+		VBox usersVBox = (VBox) userListScrollPane.getContent();
+
+		EventDAO eventDAO = new EventDAO();
 		UserDAO userDAO = new UserDAO();
-		User user = userDAO.findUser(1L);
 
-		user.getEvents().add(event);
+		eventDAO.saveEvent(event);
 
-		userDAO.saveUser(user);
+		for(Node node : usersVBox.getChildren()){
+
+			CheckBox checkBox = (CheckBox) node;
+
+			User userFromScrollList = userDAO.findUser(Long.parseLong(checkBox.getId()));
+			Event eventL = eventDAO.findUserEvent(userFromScrollList, event.getId());
+
+			if(checkBox.isSelected() && eventL == null){
+
+				eventDAO.saveSharedEvent(userFromScrollList,event);
+
+			} else if(!checkBox.isSelected() && eventL != null){
+
+				eventDAO.removeUserEvent(userFromScrollList,event);
+
+			}
+
+		}
+
+		if(eventId == null){
+
+			eventDAO.saveSharedEvent(user,event);
+
+		}
 
 		calendarCreator.createCalendar();
 		
@@ -153,11 +185,22 @@ public class DayEventWindowController implements Initializable{
 	@FXML
 	private void handleDeleteButton(){
 
+		VBox usersVBox = (VBox) userListScrollPane.getContent();
+
+		EventDAO eventDAO = new EventDAO();
 		UserDAO userDAO = new UserDAO();
 
-		user = userDAO.findUser(user.getId());
+		for(Node node : usersVBox.getChildren()){
 
-		user.getEvents().remove(event);
+			CheckBox checkBox = (CheckBox) node;
+
+			User userFromScrollList = userDAO.findUser(Long.parseLong(checkBox.getId()));
+
+			eventDAO.removeUserEvent(userFromScrollList,event);
+
+		}
+
+		eventDAO.removeUserEvent(user,event);
 
 		calendarCreator.createCalendar();
 		
@@ -228,7 +271,9 @@ public class DayEventWindowController implements Initializable{
 
 		try {
 
-			String emailString = Configuration.getProperty("email");
+			UserDAO userDAO = new UserDAO();
+
+			String emailString = userDAO.findUser(user.getId()).getUserEmail();
 
 			if(emailString.isEmpty()){
 
@@ -245,7 +290,7 @@ public class DayEventWindowController implements Initializable{
 					event.getPlace(),
 					event.getDescription());
 
-			Email email = new Email(Configuration.getProperty("email"), event.getLabel(), event.getLabel(), "", inputStream );
+			Email email = new Email(emailString, event.getLabel(), event.getLabel(), "", inputStream );
 
 			email.send();
 
@@ -314,7 +359,7 @@ public class DayEventWindowController implements Initializable{
 
 		if(eventId != null){
 
-			event = getEventById(eventId);
+			event = eventDAO.findEvent(eventId);
 
 			labelTextField.setText(event.getLabel());
 			placeTextField.setText(event.getPlace());
@@ -338,12 +383,52 @@ public class DayEventWindowController implements Initializable{
 
 		}
 
+		UserDAO userDAO = new UserDAO();
+		List<User> usersList = userDAO.findAllUsers();
 
-	}
+		VBox usersVBox = new VBox();
+		usersVBox.getStyleClass().add("vbox-events");
 
-	private Event getEventById(Long eventId){
+		for (Iterator<User> iterator = usersList.iterator(); iterator.hasNext();) {
+			User userL = iterator.next();
+			if (userL.getId() == user.getId()) {
+				iterator.remove();
+			}
+		}
 
-		return eventDAO.getEventFromDatabase(eventId);
+		for(User userL : usersList){
+
+			CheckBox checkBox = new CheckBox(userL.getUserLogin());
+
+			if(eventId != null){
+
+				Event userEvent = eventDAO.findUserEvent(userL,event.getId());
+
+				if(userEvent != null){
+
+					checkBox.setSelected(true);
+
+				} else {
+
+					checkBox.setSelected(false);
+
+				}
+
+			} else {
+
+				checkBox.setSelected(false);
+
+			}
+
+			checkBox.setId(Long.toString(userL.getId()));
+
+			usersVBox.getChildren().add(checkBox);
+
+		}
+
+		userListScrollPane.setContent(usersVBox);
+		userListScrollPane.getStyleClass().add("scroll-pane");
+
 
 	}
 	

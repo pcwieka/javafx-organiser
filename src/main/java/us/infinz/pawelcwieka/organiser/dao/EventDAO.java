@@ -4,7 +4,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import us.infinz.pawelcwieka.organiser.resource.Event;
+import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.util.HibernateSession;
+import us.infinz.pawelcwieka.organiser.util.HibernateUtil;
 
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class EventDAO implements IEventDAO {
     }
 
     @Override
-    public List<Event> findAllEventsForMonth(DateTime dateTime){
+    public List<Event> findAllUserEventsForMonth(DateTime dateTime){
 
         String query = "from EVENT ";
 
@@ -29,10 +31,18 @@ public class EventDAO implements IEventDAO {
     }
 
     @Override
-    public List<Event> findAllEvents() {
+    public List<Event> findAllUserEvents(User user) {
 
-        return database.getListOfObjectsFromDatabase("from EVENT");
+        return database.getListOfObjectsFromDatabase("select e from EVENT e join e.users u where u.id = " +user.getId());
 
+    }
+
+    @Override
+    public Event findUserEvent(User user, Long eventId) {
+
+        String query = "select e from EVENT e join e.users u where u.id = " + user.getId() + " and e.id = " + Long.toString(eventId);
+
+        return database.createCustomQueryGet(query);
     }
 
     @Override
@@ -48,16 +58,18 @@ public class EventDAO implements IEventDAO {
 
     }
 
-    public Event getEventFromDatabase(Long id) {
+    public void saveSharedEvent(User user, Event event) {
 
-        Session session = HibernateSession.getInstance().getSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         Transaction tx = null;
-        Event object = null;
+
+        Long objectId = null;
 
         try {
             tx = session.beginTransaction();
 
-            object = (Event) session.get(Event.class, id);
+           session.createNativeQuery("insert into SHARED_EVENTS (EVENT_ID, USER_ID) VALUES (" + event.getId() + ", " + user.getId()+")").executeUpdate();
 
             tx.commit();
         } catch (Exception e) {
@@ -66,12 +78,33 @@ public class EventDAO implements IEventDAO {
             }
             e.printStackTrace();
         } finally {
-            //session.close();
+            session.close();
+        }
+    }
+
+    public void removeUserEvent(User user, Event event){
+
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+
+            session.createNativeQuery("delete from SHARED_EVENTS where EVENT_ID = " + event.getId() + " and USER_ID = " + user.getId()).executeUpdate();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
         }
 
-        return object;
-
     }
+
 
 
 }

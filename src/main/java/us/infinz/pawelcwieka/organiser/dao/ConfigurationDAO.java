@@ -1,6 +1,7 @@
 package us.infinz.pawelcwieka.organiser.dao;
 
 import us.infinz.pawelcwieka.organiser.resource.Configuration;
+import us.infinz.pawelcwieka.organiser.resource.User;
 
 import java.util.List;
 
@@ -11,6 +12,14 @@ public class ConfigurationDAO implements IConfigurationDAO {
     @Override
     public Configuration findConfiguration(Long onfigurationId) {
         return database.getObjectFromDatabase(onfigurationId);
+    }
+
+    @Override
+    public Configuration findUserConfiguration(User user) {
+
+        String query = " select c from CONFIGURATION c where c.user = "+ user.getId()  + "";
+
+        return database.createCustomQueryGet(query);
     }
 
     @Override

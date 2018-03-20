@@ -15,7 +15,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import org.hibernate.Hibernate;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,7 +24,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import us.infinz.pawelcwieka.organiser.dao.UserDAO;
+import us.infinz.pawelcwieka.organiser.dao.EventDAO;
 import us.infinz.pawelcwieka.organiser.resource.Event;
 import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.thread.ForecastThread;
@@ -77,7 +76,7 @@ private static CalendarCreator instance = null;
 	private DateTime dateTimeMinusDays;
 	private int maxRowNumber;
 	private boolean newRowAdded=false;
-	private Set<Event> allUserEvents;
+	private List<Event> allUserEvents;
 
 	private BooleanProperty booleanProperty = new SimpleBooleanProperty(true);
 
@@ -89,7 +88,6 @@ private static CalendarCreator instance = null;
 
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				System.out.println("changed " + oldValue + "->" + newValue);
 
 				WeatherBoxCreator weatherBoxCreator = new WeatherBoxCreator(weatherTopVBox,weatherBottomVBox,weatherIcon,booleanProperty);
 				weatherBoxCreator.setUser(user);
@@ -123,22 +121,29 @@ private static CalendarCreator instance = null;
 		
 		calendarGridPane.getChildren().clear();
 
-		System.out.println("USERNAME: " + user.getUserLogin() + ", USER_ID: " + user.getId());
 
-		UserDAO userDAO = new UserDAO();
+		EventDAO eventDAO = new EventDAO();
 
-		allUserEvents = userDAO.findUser(user.getId()).getEvents();
+		allUserEvents = eventDAO.findAllUserEvents(user);
 
 		createAllDayCellsAndEvents();
 		addDayNamesRowsAnTopAndBottom();
 		addWeeksNumbersCells();
 		calendarGridPane.getStyleClass().add("grid");
 
+		/*WeatherBoxCreator weatherBoxCreator = new WeatherBoxCreator(weatherTopVBox,weatherBottomVBox,weatherIcon,booleanProperty);
+		weatherBoxCreator.setUser(user);
+		weatherBoxCreator.createWeatherVBox();*/
+		
+		
+		}
+
+		public void refreshForecastVBox(){
+
 		WeatherBoxCreator weatherBoxCreator = new WeatherBoxCreator(weatherTopVBox,weatherBottomVBox,weatherIcon,booleanProperty);
 		weatherBoxCreator.setUser(user);
 		weatherBoxCreator.createWeatherVBox();
-		
-		
+
 		}
 		
 

@@ -27,6 +27,9 @@ public class User extends AuditColumns{
     @Column(name = "USER_EMAIL")
     private String userEmail;
 
+    @Column(name = "USER_SESSION_ACTIVE")
+    private Boolean sessionActive;
+
     @ManyToMany(fetch = FetchType.LAZY,cascade = { CascadeType.ALL})
     @JoinTable(
             name = "SHARED_EVENTS",
@@ -72,6 +75,14 @@ public class User extends AuditColumns{
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public Boolean getSessionActive() {
+        return sessionActive;
+    }
+
+    public void setSessionActive(Boolean sessionActive) {
+        this.sessionActive = sessionActive;
     }
 
     public Set<Event> getEvents() {

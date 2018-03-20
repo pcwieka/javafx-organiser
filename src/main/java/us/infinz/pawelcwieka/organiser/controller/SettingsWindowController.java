@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.hibernate.Hibernate;
 import us.infinz.pawelcwieka.organiser.api.DarkSky;
 import us.infinz.pawelcwieka.organiser.api.GoogleGeocoding;
 import us.infinz.pawelcwieka.organiser.dao.*;
@@ -40,7 +41,7 @@ public class SettingsWindowController implements Initializable {
 
     private User user;
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@gmail.com$", Pattern.CASE_INSENSITIVE);
 
 
@@ -54,9 +55,9 @@ public class SettingsWindowController implements Initializable {
     @FXML
     private void handleSaveButton(){
 
-        IUserDAO userDAO = new UserDAO();
+        UserDAO userDAO = new UserDAO();
 
-        user = userDAO.findUser(user.getId());
+        User user = userDAO.findUser(this.user.getId());
 
         boolean localisationExistsAlready = false;
 
@@ -86,11 +87,9 @@ public class SettingsWindowController implements Initializable {
 
         }
 
-        //Configuration.saveProperty("email",emailTextField.getText());
         user.setUserEmail(emailTextField.getText());
-        //Configuration.saveProperty("forecast", (String) refreshingForecastPeriodComboBox.getValue());
 
-        Configuration configuration = new Configuration();
+        Configuration configuration = user.getConfiguration();
         configuration.setConfigurationForecastRefresh((String)refreshingForecastPeriodComboBox.getValue());
 
         user.setConfiguration(configuration);
@@ -108,9 +107,10 @@ public class SettingsWindowController implements Initializable {
 
                 localizations.clear();
 
-                localizations.addAll(user.getLocalizations());
+                localizations.addAll(localisationDAO.findAllLocalisations(user));
 
                 Long localizationId = null;
+                Long forecastId = null;
 
                 for (Localization lc : localizations) {
 
@@ -118,6 +118,7 @@ public class SettingsWindowController implements Initializable {
 
                         localisationExistsAlready = true;
                         localizationId = lc.getId();
+                        forecastId = lc.getForecast().getId();
                         break;
 
                     }
@@ -126,10 +127,31 @@ public class SettingsWindowController implements Initializable {
 
                 localisationDAO.updateLocalisationsActiveColumn(user, false);
 
+                DarkSky darkSky = new DarkSky();
+
+                Forecast forecast = darkSky.getForecast(localization);
+
+                if(forecastId !=null) {
+
+                    forecast.setId(forecastId);
+
+                }
+
+                localization.setForecast(forecast);
+                localization.setUser(user);
+
+                if(localizationId != null){
+
+                    localization.setId(localizationId);
+
+                }
+
+                localisationDAO.saveLocalisation(localization);
+
                 if (!localisationExistsAlready) {
 
-                    user.getLocalizations().add(localization);
-                    userDAO.saveUser(user);
+                    localization.setUser(user);
+                    localisationDAO.saveLocalisation(localization);
 
                     localizations.add(localization);
 
@@ -145,17 +167,23 @@ public class SettingsWindowController implements Initializable {
 
                 localisationComboBox.setValue(localization);
 
-                DarkSky darkSky = new DarkSky();
 
-                Forecast forecast = darkSky.getForecast(localization);
-
-                localization.setForecast(forecast);
-                localization.setUser(user);
 
             }
 
+            userDAO.saveUser(user);
+
             CalendarCreator calendarCreator = CalendarCreator.getInstance();
             calendarCreator.createCalendar();
+            calendarCreator.refreshForecastVBox();
+
+            MessageWindowProvider messageWindowProvider = new MessageWindowProvider(
+
+                    "Uwaga!",
+                    "Ustawienia zostały zapisane pomyślnie."
+            );
+
+            messageWindowProvider.showMessageWindow();
 
         }
 
@@ -179,15 +207,15 @@ public class SettingsWindowController implements Initializable {
 
     public void init(User user){
 
+        this.user = user;
+
         localizations = FXCollections.observableArrayList();
 
-        IUserDAO userDAO = new UserDAO();
+        LocalisationDAO localisationDAO = new LocalisationDAO();
 
-        this.user = userDAO.findUser(user.getId());
+        localizations.addAll(localisationDAO.findAllLocalisations(user));
 
         localisationComboBox.getItems().addAll(localizations);
-
-        ILocalisationDAO localisationDAO = new LocalisationDAO();
 
         Localization activeLocalization = localisationDAO.findActiveLocalisation(user);
 
@@ -196,11 +224,12 @@ public class SettingsWindowController implements Initializable {
             localisationComboBox.setValue(activeLocalization);
         }
 
-        emailTextField.setText(user.getUserEmail());
+        emailTextField.setText(user.getUserEmail() == null ? "" : user.getUserEmail());
 
         refreshingForecastPeriodComboBox.getItems().addAll("5", "10", "15","20","30","45","60");
 
-        refreshingForecastPeriodComboBox.setValue(user.getConfiguration().getConfigurationForecastRefresh());
+        UserDAO userDAO = new UserDAO();
+        refreshingForecastPeriodComboBox.setValue(userDAO.findUser(user.getId()).getConfiguration().getConfigurationForecastRefresh());
 
     }
 

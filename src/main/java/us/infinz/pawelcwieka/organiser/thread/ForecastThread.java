@@ -2,14 +2,10 @@ package us.infinz.pawelcwieka.organiser.thread;
 
 import javafx.beans.property.BooleanProperty;
 import us.infinz.pawelcwieka.organiser.api.DarkSky;
-import us.infinz.pawelcwieka.organiser.dao.IForecastDAO;
-import us.infinz.pawelcwieka.organiser.dao.ForecastDAO;
-import us.infinz.pawelcwieka.organiser.dao.ILocalisationDAO;
-import us.infinz.pawelcwieka.organiser.dao.LocalisationDAO;
+import us.infinz.pawelcwieka.organiser.dao.*;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
 import us.infinz.pawelcwieka.organiser.resource.Localization;
 import us.infinz.pawelcwieka.organiser.resource.User;
-import us.infinz.pawelcwieka.organiser.util.Configuration;
 
 public class ForecastThread extends Thread{
 
@@ -34,6 +30,10 @@ public class ForecastThread extends Thread{
 
                     Localization localization = localisationDAO.findActiveLocalisation(user);
 
+                    UserDAO userDAO = new UserDAO();
+
+                    user = userDAO.findUser(user.getId());
+
                     if(localization !=null){
 
                         DarkSky darkSky = new DarkSky();
@@ -48,7 +48,7 @@ public class ForecastThread extends Thread{
 
                     }
 
-                    Thread.sleep(Configuration.getProperty("forecast") == null ? 5*60*1000 : Long.parseLong(Configuration.getProperty("forecast"))*60*1000);
+                    Thread.sleep(user.getConfiguration().getConfigurationForecastRefresh() == null ? 5*60*1000 : Long.parseLong(user.getConfiguration().getConfigurationForecastRefresh())*60*1000);
 
 
                 } catch (InterruptedException e) {

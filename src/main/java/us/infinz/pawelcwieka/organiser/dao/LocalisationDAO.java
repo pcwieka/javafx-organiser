@@ -12,7 +12,7 @@ public class LocalisationDAO implements ILocalisationDAO {
     @Override
     public Localization findActiveLocalisation(User user) {
 
-        String query = " from LOCALIZATION where USER_ID = "+ user.getId() + " AND LOCALIZATION_ACTIVE = 1";
+        String query = " select l from LOCALIZATION l where l.user = "+ user.getId() + " AND l.active = 1";
 
         return database.createCustomQueryGet(query);
 
@@ -21,7 +21,7 @@ public class LocalisationDAO implements ILocalisationDAO {
     @Override
     public List<Localization> findAllLocalisations(User user) {
 
-        String query = "l from LOCALIZATION l WHERE l.USER_ID = " + user.getId();
+        String query = "select l from LOCALIZATION l WHERE l.user = " + user.getId();
 
         return database.getListOfObjectsFromDatabase(query);
 
@@ -39,8 +39,6 @@ public class LocalisationDAO implements ILocalisationDAO {
 
         String query = "update LOCALIZATION set LOCALIZATION_ACTIVE = " + active.toString() + " WHERE USER_ID = " + user.getId();
 
-        System.out.println(query);
-
         database.createCustomQueryUpdate(query);
 
     }
@@ -51,7 +49,6 @@ public class LocalisationDAO implements ILocalisationDAO {
         String query = "update LOCALIZATION set LOCALIZATION_ACTIVE = " + active.toString()
                 + " WHERE LOCALIZATION_USER_TYPED_NAME = '" + localization.getUserTypedName()+ "' AND USER_ID = " + user.getId();
 
-        System.out.println(query);
 
         database.createCustomQueryUpdate(query);
 

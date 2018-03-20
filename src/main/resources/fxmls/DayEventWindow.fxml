@@ -68,7 +68,13 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <VBox alignment="CENTER" prefHeight="136.0" prefWidth="247.0" spacing="20.0">
+                  <VBox alignment="CENTER" prefHeight="156.0" prefWidth="143.0" spacing="5.0">
+                     <children>
+                        <Label prefHeight="19.0" prefWidth="140.0" styleClass="label-dayname-cell" stylesheets="@../stylesheet.css" text="Udostępnij:" />
+                        <ScrollPane fx:id="userListScrollPane" hbarPolicy="NEVER" prefHeight="133.0" prefWidth="143.0" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="156.0" prefWidth="197.0" spacing="20.0">
                      <children>
                         <Button fx:id="iCalendarButton" mnemonicParsing="false" onAction="#handleICalendarButton" prefHeight="53.0" prefWidth="189.0">
                            <graphic>

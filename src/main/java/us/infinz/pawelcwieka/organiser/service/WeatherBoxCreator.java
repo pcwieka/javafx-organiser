@@ -114,13 +114,28 @@ public class WeatherBoxCreator {
 
                     Forecast forcst = darkSky.getForecast(loc);
 
-                    IForecastDAO forcstDAO = new ForecastDAO();
-                    forcstDAO.deleteAllForecasts();
-                    forcstDAO.saveForecast(forcst);
+                    Forecast prevForecast = loc.getForecast();
+
+                    Long forId = null;
+
+                    if(prevForecast != null){
+
+                        forId = prevForecast.getId();
+                        forcst.setId(forId);
+
+                    }
+
+                    loc.setForecast(forcst);
 
                     booleanProperty.set(!booleanProperty.get());
 
-                    System.out.println("Odświeżono pogodę.");
+                    MessageWindowProvider messageWindowProvider = new MessageWindowProvider(
+
+                            "Uwaga!",
+                            "Aktualizacja prognozy pogody zakończyła się pomyślnie."
+                    );
+
+                    messageWindowProvider.showMessageWindow();
 
                 }
 

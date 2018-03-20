@@ -6,9 +6,9 @@
 
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/organiser</property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">Alkormizar3</property>
+        <property name="hibernate.connection.url">jdbc:mysql://31.6.69.35:3306/organizer?characterEncoding=UTF-8</property>
+        <property name="hibernate.connection.username">organizer</property>
+        <property name="hibernate.connection.password">ps2018</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
         <property name="hibernate.current_session_context_class">thread</property>

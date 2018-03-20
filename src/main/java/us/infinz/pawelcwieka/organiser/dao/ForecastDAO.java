@@ -11,7 +11,7 @@ public class ForecastDAO implements IForecastDAO {
     private IDatabase<Forecast> database = new Database<>(Forecast.class);
 
     @Override
-    public Forecast findForecast(User user, Localization localization) {
+    public Forecast findForecast(Localization localization) {
 
         String query = "f from FORECAST f WHERE f.";
 

@@ -30,7 +30,7 @@ public class Localization extends AuditColumns{
 
     @Column(name = "LOCALIZATION_ACTIVE")
     @NonNull
-    private Boolean localizationActive;
+    private Boolean active;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
@@ -44,12 +44,12 @@ public class Localization extends AuditColumns{
 
     }
 
-    public Localization(String formattedAddress, String userTypedName, String latitude, String longitude, Boolean localizationActive) {
+    public Localization(String formattedAddress, String userTypedName, String latitude, String longitude, Boolean active) {
         this.formattedAddress = formattedAddress;
         this.userTypedName = userTypedName;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.localizationActive = localizationActive;
+        this.active = active;
     }
 
     public Long getId() {
@@ -92,12 +92,12 @@ public class Localization extends AuditColumns{
         this.longitude = longitude;
     }
 
-    public Boolean getLocalizationActive() {
-        return localizationActive;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setLocalizationActive(Boolean active) {
-        this.localizationActive = active;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public User getUser() {

@@ -2,6 +2,7 @@ package us.infinz.pawelcwieka.organiser.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import us.infinz.pawelcwieka.organiser.resource.AuditColumns;
 import us.infinz.pawelcwieka.organiser.resource.User;
 import us.infinz.pawelcwieka.organiser.util.HibernateSession;
 import us.infinz.pawelcwieka.organiser.util.HibernateUtil;
@@ -23,7 +24,8 @@ public class Database<T> implements IDatabase<T> {
 
     public List<T> getListOfObjectsFromDatabase(String query) {
 
-        Session session = HibernateSession.getInstance().getSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         Transaction tx = null;
         List<T> objectsList = null;
 
@@ -39,7 +41,7 @@ public class Database<T> implements IDatabase<T> {
             }
             e.printStackTrace();
         } finally {
-            //session.close();
+            session.close();
         }
 
         return objectsList;
@@ -48,7 +50,8 @@ public class Database<T> implements IDatabase<T> {
 
     public T getObjectFromDatabase(Long id) {
 
-        Session session = HibernateSession.getInstance().getSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         Transaction tx = null;
         T object = null;
 
@@ -64,23 +67,26 @@ public class Database<T> implements IDatabase<T> {
             }
             e.printStackTrace();
         } finally {
-            //session.close();
+            session.close();
         }
 
         return object;
 
     }
 
-    public Long saveObjectToDatabase(T object) {
+    public <T extends AuditColumns> Long saveObjectToDatabase(T object) {
 
+        Session session = HibernateUtil.getSessionFactory().openSession();
 
-        Session session = HibernateSession.getInstance().getSession();
         Transaction tx = null;
+
+        Long objectId = null;
 
         try {
             tx = session.beginTransaction();
 
             session.saveOrUpdate(object);
+            objectId = object.getId();
 
             tx.commit();
         } catch (Exception e) {
@@ -89,19 +95,18 @@ public class Database<T> implements IDatabase<T> {
             }
             e.printStackTrace();
         } finally {
-            //session.close();
+            session.close();
         }
 
-        //return object.getId();
-        return 1L;
-
+        return objectId;
 
     }
 
     @Override
     public void deleteObjectFromDatabase(T object) {
 
-        Session session = HibernateSession.getInstance().getSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         Transaction tx = null;
 
         try {
@@ -116,7 +121,7 @@ public class Database<T> implements IDatabase<T> {
             }
             e.printStackTrace();
         } finally {
-            //session.close();
+            session.close();
         }
 
     }
@@ -124,7 +129,8 @@ public class Database<T> implements IDatabase<T> {
     @Override
     public void createCustomQueryUpdate(String query) {
 
-        Session session = HibernateSession.getInstance().getSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         Transaction tx = null;
 
         try {
@@ -139,7 +145,7 @@ public class Database<T> implements IDatabase<T> {
             }
             e.printStackTrace();
         } finally {
-            //session.close();
+            session.close();
         }
 
     }
@@ -147,7 +153,8 @@ public class Database<T> implements IDatabase<T> {
     @Override
     public T createCustomQueryGet(String query) {
 
-        Session session = HibernateSession.getInstance().getSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         Transaction tx = null;
         T object = null;
 
@@ -163,7 +170,7 @@ public class Database<T> implements IDatabase<T> {
             }
             e.printStackTrace();
         } finally {
-            //session.close();
+            session.close();
         }
 
         return object;

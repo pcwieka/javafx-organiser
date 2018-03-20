@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IForecastDAO {
 
-    public Forecast findForecast(User user, Localization localization);
+    public Forecast findForecast(Localization localization);
     public Long saveForecast(Forecast forecast);
     public void deleteAllForecasts();
 }

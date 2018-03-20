@@ -18,7 +18,7 @@ public class UserDAO implements IUserDAO {
     @Override
     public User findUserByLogin(String login) {
 
-        String query = " u from USER u where u.USER_LOGIN = "+ login ;
+        String query = " select u from USER u where u.userLogin = '"+ login  + "'";
 
         return database.createCustomQueryGet(query);
     }

@@ -5,6 +5,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import us.infinz.pawelcwieka.organiser.resource.Forecast;
 import us.infinz.pawelcwieka.organiser.resource.ForecastDaily;
@@ -49,13 +50,26 @@ public class DarkSky {
 
             e.printStackTrace();
 
+        } catch (JSONException e){
+
+            MessageWindowProvider messageWindowProvider = new MessageWindowProvider(
+
+                    "Błąd pobrania prognozy pogody",
+                    "Nie można pobrać prognozy pogody dla podanej lokalizacji. \n" +
+                            "Niekompletne dane pobrane z DarkSky. Skontaktuj się z Administratorem."
+            );
+
+            messageWindowProvider.showMessageWindow();
+
+            e.printStackTrace();
+
         }
 
         return forecast;
 
     }
 
-    private Forecast getForecastFromJSONObject(JSONObject jsonObject) {
+    private Forecast getForecastFromJSONObject(JSONObject jsonObject) throws JSONException{
 
         Forecast forecast = new Forecast();
 
@@ -80,7 +94,7 @@ public class DarkSky {
 
         List<ForecastDaily> forecastDailyList = new ArrayList<>();
 
-        for(int i = 0; i < jsonForecastDaily.length();i++){
+        /*for(int i = 0; i < jsonForecastDaily.length();i++){
 
             ForecastDaily forecastDaily = new ForecastDaily();
 
@@ -98,7 +112,7 @@ public class DarkSky {
 
             forecastDailyList.add(forecastDaily);
 
-        }
+        }*/
 
         forecast.setNextWeekForecast(forecastDailyList);
 

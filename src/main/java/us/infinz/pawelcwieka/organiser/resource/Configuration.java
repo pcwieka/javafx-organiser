@@ -18,6 +18,7 @@ public class Configuration extends AuditColumns{
     private String configurationForecastRefresh;
 
     @OneToOne(mappedBy = "configuration")
+    @JoinColumn(name = "USER_ID")
     private User user;
 
     public Long getId() {
